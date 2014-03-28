@@ -31,16 +31,12 @@ def normalization(pop):
 
 def cal_pop(data):
     pop = {}
-    month = {}
+    for record in data:
+        pop[record[1]] = 0.0
     for record in data:
         if record[2] != "1":
             continue
-        month[record[3]] = 1
-        if record[1] in pop:
-            pop[record[1]] += get_score(record[3])
-        else:
-            pop[record[1]] = get_score(record[3])
-
+        pop[record[1]] += get_score(record[3])
     normalization(pop)
     return pop
 
