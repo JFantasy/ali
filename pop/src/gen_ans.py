@@ -33,10 +33,10 @@ def load_sort_matrix(input_file):
 def gen_ans(buyrate, user_brandlist):
 
 	date = datetime.now().strftime('%Y%m%d%H%M%S')
-	f = open('../data/ans/submit_' + date + '.txt', 'w')
+	f = open('../ans/submit_' + date + '.txt', 'w')
 	for user in user_brandlist:
-		topK = min(len(user_brandlist[user]), max(5,  int(len(user_brandlist[user]) * buyrate[user])))
-		if topK == 0 : 
+		topK = min(len(user_brandlist[user]), max(5,  min(10, int(len(user_brandlist[user]) * buyrate[user]))))
+		if topK == 0:
 			continue
 		f.write(user + ' ' + user_brandlist[user][0])
 		for i in range(1, topK):
