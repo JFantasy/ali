@@ -1,0 +1,1 @@
+fin = open('data/user_brand_data_full.csv')
