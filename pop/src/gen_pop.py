@@ -17,10 +17,13 @@ def output(output_file, pop):
         fp.write(item + ' ' + str(pop[item]) + '\n')
     fp.close()
 
-def get_score(month):
+def get_month_score(month):
     score = [0.2, 0.4, 0.6, 0.8, 1.0]
-    rank = int(month) - 4
-    return score[rank]
+    return score[int(month) - 4]
+
+def get_rank_score(rank):
+    score = [0.25, 1.0, 0.5, 0.75]
+    return score[int(rank)]
 
 def normalization(pop):
     score_sum = 0.0
@@ -34,9 +37,7 @@ def cal_pop(data):
     for record in data:
         pop[record[1]] = 0.0
     for record in data:
-        if record[2] != "1":
-            continue
-        pop[record[1]] += get_score(record[3])
+        pop[record[1]] += get_month_score(record[3]) * get_rank_score(record[2])
     normalization(pop)
     return pop
 
