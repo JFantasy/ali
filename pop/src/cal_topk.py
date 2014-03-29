@@ -43,7 +43,7 @@ def cal_topK(buyrate, user_brandlist, output_file):
 		list_len = len(user_brandlist[user])
 		topK = min(list_len, min(7, buyrate[user]))
 		if topK == 0:
-			topK = 1
+			topK = min(list_len, 2)
 		f.write(user + ' ' + str(topK) + '\n')
 
 	f.close()
