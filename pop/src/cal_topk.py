@@ -41,13 +41,13 @@ def cal_topK(buyrate, user_brandlist, output_file):
 	f = open(output_file, 'w')
 	for user in user_brandlist:
 		list_len = len(user_brandlist[user])
-		topK = min(list_len, max(3, min(15, int(buyrate[user])*3)))
+		topK = min(list_len, min(15, int(buyrate[user])*3))
 		f.write(user + ' ' + str(topK) + '\n')
 
 	f.close()
 
 if __name__ == "__main__":
-	data = load_data('../../data/user_brand_date_full.csv')
+	data = load_data('../data/ali_order_brand_date_last_2_month.csv')
 	user_brandlist = load_user_brandlist('../data/sort_matrix.txt')
 	buyrate = cal_user_buyrate(data)
 	cal_topK(buyrate, user_brandlist, '../data/topk.txt')
