@@ -1,9 +1,10 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
-import sys, collections
+import sys
+from collections import defaultdict as ddict
 
 def load_base(path):
-    base = collections.defaultdict(list)
+    base = ddict(list)
     with file(path) as f:
         for line in f:
             elements = line.strip().split(',')
@@ -15,7 +16,7 @@ def load_base(path):
     return base
 
 def load_predict(path):
-    predict = collections.defaultdict(list)
+    predict = ddict(list)
     with file(path) as f:
         for line in f:
             elements = line.strip().split(' ')
@@ -43,7 +44,7 @@ def evaluate(base, predict):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print "usage: %s raw_train_data output_test_data\n" % sys.argv[0]
+        print "usage: %s base_data output_predict_data\n" % sys.argv[0]
         exit(0)
     base = load_base(sys.argv[1])
     predict = load_predict(sys.argv[2])
