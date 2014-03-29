@@ -16,9 +16,6 @@ def get_rank_score(rank):
     score = [0.2, 1.0, 0.5, 0.8]
     return score[int(rank) - 1]
 
-def construct():
-    return collections.defaultdict(float)
-
 def cal_like(data):
     matrix = collections.defaultdict(lambda:collections.defaultdict(float))
     for record in data:

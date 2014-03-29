@@ -17,7 +17,7 @@ def load_click(data_file):
     fp = open(data_file)
     for line in fp:
         user, item, rank, month, day = line.split(',')
-        if rank == "0":
+        if rank != "1":
             if user in click:
                 click[user][item] = 1
             else:
