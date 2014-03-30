@@ -37,7 +37,6 @@ def cal_like(data, repeat_buy, dynamic):
         buy[user][item] += 1 if rank == "1" else 0
         action[user][rank] += 1
 
-    s = 10
     for record in data:
         user, item, rank = record
         gain = get_rank_score(rank) * (1.0 if dynamic == "0" or rank == "1" \

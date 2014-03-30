@@ -7,9 +7,10 @@ def run_cmd(cmd):
     print "Running: %s" % cmd
     os.system(cmd)
 
-def build_dir():
-    date = datetime.datetime.now().strftime("%m%d%H%M%S")
-    result_dir = "../ans/%s" % date
+def build_dir(filter_month, min_topk, max_topk, repeat, dynamic):
+    date = datetime.datetime.now().strftime("%m%d%H%M")
+    result_dir = "../ans/%s_%s_%d_%d_%s_%s" % (date, \
+            "".join(filter_month), min_topk, max_topk, repeat, dynamic)
     cmd = "mkdir %s" % result_dir
     run_cmd(cmd)
     return result_dir
@@ -60,14 +61,14 @@ if __name__ == "__main__":
         print "Format Error"
         exit(0)
 
-    result_dir = build_dir()
-
     original_input_file = sys.argv[1]
     filter_month = sys.argv[2].split(",")
     min_topk = int(sys.argv[3])
     max_topk = int(sys.argv[4])
     repeat = sys.argv[5]
     dynamic = sys.argv[6]
+
+    result_dir = build_dir(filter_month, min_topk, max_topk, repeat, dynamic)
 
     filter_input_file = process_filter(result_dir, original_input_file, \
             filter_month)
