@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 
+import sys
 from datetime import datetime
 
 def load_user_brandlist(input_file):
@@ -24,7 +25,6 @@ def load_topk(input_file):
 	return topk
 
 def gen_ans(user_brandlist, topk):
-
 	date = datetime.now().strftime('%m%d_%H%M%S')
 	f = open('../ans/' + date + '.txt', 'w')
 	for user in user_brandlist:
@@ -39,7 +39,11 @@ def gen_ans(user_brandlist, topk):
 	f.close()
 
 if __name__ == "__main__":
-
-	topk = load_topk('../data/topk.txt')
-	user_brandlist = load_user_brandlist('../data/sort_matrix_last_2_month.txt')
-	gen_ans(user_brandlist, topk)
+	if len(sys.argv) < 5:
+		print "Format Error"
+	else:
+		topk_file = sys.argv[1]
+		sort_matrix_file = sys.argv[2]
+		topk = load_topk('../data/topk.txt')
+		user_brandlist = load_user_brandlist('../data/sort_matrix_last_2_month.txt')
+		gen_ans(user_brandlist, topk)
