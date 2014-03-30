@@ -27,9 +27,9 @@ def process_gen_pop(result_dir, input_file):
     run_cmd(cmd)
     return pop_file
 
-def process_gen_like(result_dir, input_file):
+def process_gen_like(result_dir, input_file, repeat):
     like_file = "%s/like.txt" % result_dir
-    cmd = "python gen_like_matrix.py %s %s" % (input_file, like_file)
+    cmd = "python gen_like_matrix.py %s %s %s" % (input_file, like_file, repeat)
     run_cmd(cmd)
     return like_file
 
@@ -55,7 +55,7 @@ def process_gen_ans(result_dir, topk_file, sort_file):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print "Format Error"
         exit(0)
 
@@ -65,11 +65,12 @@ if __name__ == "__main__":
     filter_month = sys.argv[2].split(",")
     min_topk = int(sys.argv[3])
     max_topk = int(sys.argv[4])
+    repeat = sys.argv[5]
 
     filter_input_file = process_filter(result_dir, original_input_file, \
             filter_month)
     pop_file = process_gen_pop(result_dir, filter_input_file)
-    like_file = process_gen_like(result_dir, filter_input_file)
+    like_file = process_gen_like(result_dir, filter_input_file, repeat)
     sort_file = process_sort_pop(result_dir, pop_file, like_file, \
             filter_input_file)
     topk_file = process_gen_topk(result_dir, filter_input_file, sort_file, \
