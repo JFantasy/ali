@@ -40,8 +40,22 @@ def process_sort_pop(result_dir, pop_file, like_file, input_file):
     run_cmd(cmd)
     return sort_file
 
+def process_gen_topk(result_dir, input_file, sort_file, min_topk, max_topk):
+    topk_file = "%s/topk.txt" % result_dir
+    cmd = "python cal_topk.py %s %s %s %s %s" % (input_file, sort_file, \
+            topk_file, str(min_topk), str(max_topk))
+    run_cmd(cmd)
+    return topk_file
+
+def process_gen_ans(result_dir, topk_file, sort_file):
+    ans_file = "%s/submit.txt"
+    cmd = "python gen_ans.py %s %s" % (topk_file, sort_file)
+    run_cmd(cmd)
+    return ans_file
+
+
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         print "Format Error"
         exit(0)
 
@@ -49,9 +63,16 @@ if __name__ == "__main__":
 
     original_input_file = sys.argv[1]
     filter_month = sys.argv[2].split(",")
-    topk = int(sys.argv[3])
+    min_topk = int(sys.argv[3])
+    max_topk = int(sys.argv[4])
 
-    filter_input_file = process_filter(result_dir, original_input_file, filter_month)
+    filter_input_file = process_filter(result_dir, original_input_file, \
+            filter_month)
     pop_file = process_gen_pop(result_dir, filter_input_file)
     like_file = process_gen_like(result_dir, filter_input_file)
-    sort_file = process_sort_pop(result_dir, pop_file, like_file, filter_input_file)
+    sort_file = process_sort_pop(result_dir, pop_file, like_file, \
+            filter_input_file)
+    topk_file = process_gen_topk(result_dir, filter_input_file, sort_file, \
+            min_topk, max_topk)
+    ans_file = process_gen_ans(result_dir, topk_file, sort_file)
+    print "Finish %s" % ans_file
