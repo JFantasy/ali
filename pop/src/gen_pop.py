@@ -19,7 +19,7 @@ def output(output_file, pop):
 
 def get_month_score(month):
     score = [0.2, 0.4, 0.6, 0.8, 1.0]
-    return score[int(month) - 4]
+    return score[int(month)]
 
 def get_rank_score(rank):
     score = [0.25, 1.0, 0.5, 0.75]

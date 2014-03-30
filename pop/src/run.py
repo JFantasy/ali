@@ -48,8 +48,8 @@ def process_gen_topk(result_dir, input_file, sort_file, min_topk, max_topk):
     return topk_file
 
 def process_gen_ans(result_dir, topk_file, sort_file):
-    ans_file = "%s/submit.txt"
-    cmd = "python gen_ans.py %s %s" % (topk_file, sort_file)
+    ans_file = "%s/submit.txt" % result_dir
+    cmd = "python gen_ans.py %s %s %s" % (topk_file, sort_file, ans_file)
     run_cmd(cmd)
     return ans_file
 

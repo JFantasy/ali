@@ -24,9 +24,9 @@ def load_topk(input_file):
 
 	return topk
 
-def gen_ans(user_brandlist, topk):
+def gen_ans(user_brandlist, topk, ans_file):
 	date = datetime.now().strftime('%m%d_%H%M%S')
-	f = open('../ans/' + date + '.txt', 'w')
+	f = open(ans_file, "w")
 	for user in user_brandlist:
 		k = topk[user]
 		if k == 0:
@@ -39,11 +39,12 @@ def gen_ans(user_brandlist, topk):
 	f.close()
 
 if __name__ == "__main__":
-	if len(sys.argv) < 3:
+	if len(sys.argv) < 4:
 		print "Format Error"
 	else:
 		topk_file = sys.argv[1]
 		sort_matrix_file = sys.argv[2]
+                ans_file = sys.argv[3]
 		topk = load_topk(topk_file)
 		user_brandlist = load_user_brandlist(sort_matrix_file)
-		gen_ans(user_brandlist, topk)
+		gen_ans(user_brandlist, topk, ans_file)

@@ -7,10 +7,11 @@ def output(input_file, output_file, months):
     fin = open(input_file)
     fout = open(output_file, "w")
     for line in fin:
-        user, item, rank, month, day = line.split(",")
+        user, item, rank, month, day = line.strip().split(",")
         if not month in months:
             continue
-        fout.write(line)
+        month = str(4 + int(month) - int(max(months)))
+        fout.write("%s,%s,%s,%s,%s\n" % (user, item, rank, month, day))
     fout.close()
     fin.close()
 
@@ -20,5 +21,5 @@ if __name__ == "__main__":
     else:
         input_file = sys.argv[1]
         output_file = sys.argv[2]
-        months = sys.argv[3:len(sys.argv)]
+        months = sys.argv[3:]
         output(input_file, output_file, months)
