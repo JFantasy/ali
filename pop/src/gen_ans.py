@@ -44,6 +44,6 @@ if __name__ == "__main__":
 	else:
 		topk_file = sys.argv[1]
 		sort_matrix_file = sys.argv[2]
-		topk = load_topk('../data/topk.txt')
-		user_brandlist = load_user_brandlist('../data/sort_matrix_last_2_month.txt')
+		topk = load_topk(topk_file)
+		user_brandlist = load_user_brandlist(sort_matrix_file)
 		gen_ans(user_brandlist, topk)
