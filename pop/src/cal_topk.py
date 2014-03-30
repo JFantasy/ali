@@ -51,7 +51,7 @@ def cal_topK(buyrate, user_brandlist, output_file, min_topk, max_topk):
 	f.close()
 
 if __name__ == "__main__":
-	if len(sys.argv) < 5:
+	if len(sys.argv) != 6:
 		print "Format Error"
 	else:
 		input_file = sys.argv[1]
