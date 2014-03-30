@@ -39,7 +39,7 @@ def gen_ans(user_brandlist, topk):
 	f.close()
 
 if __name__ == "__main__":
-	if len(sys.argv) < 3:
+	if len(sys.argv) != 3:
 		print "Format Error"
 	else:
 		topk_file = sys.argv[1]
