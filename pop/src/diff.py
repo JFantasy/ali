@@ -12,19 +12,19 @@ def load_data(path):
             predict[uid] = map(lambda x: int(x), elements[1].split(','))
     return predict
 
-def evaluate(test, predict):
+def evaluate(base, predict):
     hitBrand = 0
     pBrand = 0
     for uid in predict:
         pBrand += len(predict[uid])
-        hitBrand += len(set(predict[uid]) & set(test[uid]))
+        hitBrand += len(set(predict[uid]) & set(base[uid]))
     P = 1.0*hitBrand/pBrand
 
     hitBrand = 0
     bBrand = 0
-    for uid in test:
-        bBrand += len(test[uid])
-        hitBrand += len(set(predict[uid]) & set(test[uid]))
+    for uid in base:
+        bBrand += len(base[uid])
+        hitBrand += len(set(predict[uid]) & set(base[uid]))
     R = 1.0*hitBrand/bBrand
 
     F1 = 2*P*R/(P+R)
