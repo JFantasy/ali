@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#/usr/bin/python
 #-*- coding: utf-8 -*-
 
 import sys, os, datetime
@@ -7,11 +7,8 @@ def run_cmd(cmd):
     print "Running: %s" % cmd
     os.system(cmd)
 
-def build_dir(filter_pop_month, filter_like_month, min_topk, max_topk, repeat, dynamic):
-    date = datetime.datetime.now().strftime("%m%d%H%M")
-    result_dir = "../ans/%s_%s_%s_%d_%d_%s_%s" % (date, \
-            "".join(filter_pop_month), "".join(filter_like_month), \
-            min_topk, max_topk, repeat, dynamic)
+def build_dir():
+    result_dir = "../ans/tmp"
     cmd = "mkdir %s" % result_dir
     run_cmd(cmd)
     return result_dir
@@ -56,10 +53,12 @@ def process_gen_ans(result_dir, topk_file, sort_file):
     run_cmd(cmd)
     return ans_file
 
-def delete_tmp_files(file_list):
-    for filename in file_list:
-        cmd = "rm %s" % filename
-        run_cmd(cmd)
+def clear_files(result_dir, ans_file, submit_file):
+    cmd = "mv %s %s" % (ans_file, submit_file)
+    run_cmd(cmd)
+    cmd = "rm -rf %s" % result_dir
+    run_cmd(cmd)
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 8:
@@ -74,8 +73,7 @@ if __name__ == "__main__":
     repeat = sys.argv[6]
     dynamic = sys.argv[7]
 
-    result_dir = build_dir(filter_pop_month, filter_like_month, \
-            min_topk, max_topk, repeat, dynamic)
+    result_dir = build_dir()
 
     filter_pop_input_file = process_filter(result_dir, original_input_file, \
             filter_pop_month, "pop")
@@ -90,9 +88,10 @@ if __name__ == "__main__":
             min_topk, max_topk)
     ans_file = process_gen_ans(result_dir, topk_file, sort_file)
 
-    file_list = [filter_pop_input_file, filter_like_input_file, pop_file, \
-            like_file, sort_file, topk_file]
-    delete_tmp_files(file_list)
+    date = datetime.datetime.now().strftime("%m%d%H%M")
+    submit_name = "../ans/%s_%s_%s_%d_%d_%s_%s.txt" % (date, \
+            "".join(filter_pop_month), "".join(filter_like_month), \
+            min_topk, max_topk, repeat, dynamic)
+    clear_files(result_dir, ans_file, submit_name)
 
-    print "Finish %s" % ans_file
-
+    print "Finish %s" % submit_name
