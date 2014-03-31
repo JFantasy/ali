@@ -55,6 +55,10 @@ def process_gen_ans(result_dir, topk_file, sort_file):
     run_cmd(cmd)
     return ans_file
 
+def delete_tmp_files(file_list):
+    for filename in file_list:
+        cmd = "rm %s" % filename
+        run_cmd(cmd)
 
 if __name__ == "__main__":
     if len(sys.argv) != 7:
@@ -79,4 +83,9 @@ if __name__ == "__main__":
     topk_file = process_gen_topk(result_dir, filter_input_file, sort_file, \
             min_topk, max_topk)
     ans_file = process_gen_ans(result_dir, topk_file, sort_file)
+
+    file_list = [pop_file, like_file, sort_file, topk_file]
+    delete_tmp_files(file_list)
+
     print "Finish %s" % ans_file
+
