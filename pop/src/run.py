@@ -7,16 +7,17 @@ def run_cmd(cmd):
     print "Running: %s" % cmd
     os.system(cmd)
 
-def build_dir(filter_month, min_topk, max_topk, repeat, dynamic):
+def build_dir(filter_pop_month, filter_like_month, min_topk, max_topk, repeat, dynamic):
     date = datetime.datetime.now().strftime("%m%d%H%M")
-    result_dir = "../ans/%s_%s_%d_%d_%s_%s" % (date, \
-            "".join(filter_month), min_topk, max_topk, repeat, dynamic)
+    result_dir = "../ans/%s_%s_%s_%d_%d_%s_%s" % (date, \
+            "".join(filter_pop_month), "".join(filter_like_month), \
+            min_topk, max_topk, repeat, dynamic)
     cmd = "mkdir %s" % result_dir
     run_cmd(cmd)
     return result_dir
 
-def process_filter(result_dir, input_file, filter_month):
-    filter_input_file = "%s/filter_month.csv" % result_dir
+def process_filter(result_dir, input_file, filter_month, filter_type):
+    filter_input_file = "%s/filter_%s_month.csv" % (result_dir, filter_type)
     cmd = "python input_filter.py %s %s %s" % (input_file, filter_input_file,
             " ".join(filter_month))
     run_cmd(cmd)
@@ -61,30 +62,36 @@ def delete_tmp_files(file_list):
         run_cmd(cmd)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 7:
+    if len(sys.argv) != 8:
         print "Format Error"
         exit(0)
 
     original_input_file = sys.argv[1]
-    filter_month = sys.argv[2].split(",")
-    min_topk = int(sys.argv[3])
-    max_topk = int(sys.argv[4])
-    repeat = sys.argv[5]
-    dynamic = sys.argv[6]
+    filter_pop_month = sys.argv[2].split(",")
+    filter_like_month = sys.argv[3].split(",")
+    min_topk = int(sys.argv[4])
+    max_topk = int(sys.argv[5])
+    repeat = sys.argv[6]
+    dynamic = sys.argv[7]
 
-    result_dir = build_dir(filter_month, min_topk, max_topk, repeat, dynamic)
+    result_dir = build_dir(filter_pop_month, filter_like_month, \
+            min_topk, max_topk, repeat, dynamic)
 
-    filter_input_file = process_filter(result_dir, original_input_file, \
-            filter_month)
-    pop_file = process_gen_pop(result_dir, filter_input_file)
-    like_file = process_gen_like(result_dir, filter_input_file, repeat, dynamic)
+    filter_pop_input_file = process_filter(result_dir, original_input_file, \
+            filter_pop_month, "pop")
+    filter_like_input_file = process_filter(result_dir, original_input_file, \
+            filter_like_month, "like")
+    pop_file = process_gen_pop(result_dir, filter_pop_input_file)
+    like_file = process_gen_like(result_dir, filter_like_input_file, repeat, \
+            dynamic)
     sort_file = process_sort_pop(result_dir, pop_file, like_file, \
-            filter_input_file)
-    topk_file = process_gen_topk(result_dir, filter_input_file, sort_file, \
+            filter_like_input_file)
+    topk_file = process_gen_topk(result_dir, filter_like_input_file, sort_file, \
             min_topk, max_topk)
     ans_file = process_gen_ans(result_dir, topk_file, sort_file)
 
-    file_list = [pop_file, like_file, sort_file, topk_file]
+    file_list = [filter_pop_input_file, filter_like_input_file, pop_file, \
+            like_file, sort_file, topk_file]
     delete_tmp_files(file_list)
 
     print "Finish %s" % ans_file
