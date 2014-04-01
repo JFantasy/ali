@@ -36,7 +36,7 @@ def cal_user_buyrate(data):
 
 	buyrate = {}
 	for user in buycnt:
-		buyrate[user] = int((buycnt[user][4] + buycnt[user][5]) / 2)
+		buyrate[user] = int(max(buycnt[user][3], buycnt[user][4]))
 	
 	return buyrate		
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
 		data = load_data('../data/ali_order_brand_date_last_2_month.csv')
 		user_brandlist = load_user_brandlist('../data/sort_matrix_last_2_month.txt')
 		buyrate = cal_user_buyrate(data)
-		cal_topK(buyrate, user_brandlist, '../data/topk.txt', 2, 7)
+		cal_topK(buyrate, user_brandlist, '../data/topk.txt', 2, 15)
 	else:
 		input_file = sys.argv[1]
 		sort_matrix_file = sys.argv[2]
