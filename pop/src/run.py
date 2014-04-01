@@ -1,7 +1,7 @@
 #/usr/bin/python
 #-*- coding: utf-8 -*-
 
-import sys, os, datetime
+import sys, os, datetime, json
 
 def run_cmd(cmd):
     print "Running: %s" % cmd
@@ -53,25 +53,29 @@ def process_gen_ans(result_dir, topk_file, sort_file):
     run_cmd(cmd)
     return ans_file
 
-def clear_files(result_dir, ans_file, submit_file):
-    cmd = "mv %s %s" % (ans_file, submit_file)
+def clear_files(result_dir, ans_file, submit_path):
+    submit_file = submit_path +'/'+ submit_path[submit_path.find('_')+1:] + '.txt'
+    cmd = "mkdir %s; mv %s %s" % (submit_path, ans_file, submit_file)
+    run_cmd(cmd)
+    cmd = "cp config.json %s" % (submit_path+'/')
     run_cmd(cmd)
     cmd = "rm -rf %s" % result_dir
     run_cmd(cmd)
 
-
 if __name__ == "__main__":
-    if len(sys.argv) != 8:
-        print "Format Error"
-        exit(0)
+    original_input_file = "../data/ali_order_brand_date_full.csv"
+    conf_file = file("config.json")
+    config = json.load(conf_file)
+    conf_file.close()
 
-    original_input_file = sys.argv[1]
-    filter_pop_month = sys.argv[2].split(",")
-    filter_like_month = sys.argv[3].split(",")
-    min_topk = int(sys.argv[4])
-    max_topk = int(sys.argv[5])
-    repeat = sys.argv[6]
-    dynamic = sys.argv[7]
+    filter_pop_month = map(lambda x: str(x), config["pop_month"])
+    filter_like_month = map(lambda x: str(x), config["like_month"])
+    min_topk = config["min_topk"]
+    max_topk = config["max_topk"]
+    repeat = config["repeat"]
+    dynamic = config["dynamic"]
+    month_score = config["month_score"]
+    rank_score = config["rank_score"]
 
     result_dir = build_dir()
 
@@ -88,8 +92,8 @@ if __name__ == "__main__":
             min_topk, max_topk)
     ans_file = process_gen_ans(result_dir, topk_file, sort_file)
 
-    date = datetime.datetime.now().strftime("%m%d%H%M")
-    submit_name = "../ans/%s_%s_%s_%d_%d_%s_%s.txt" % (date, \
+    date = datetime.datetime.now().strftime("%m-%d.%H:%M:%S")
+    submit_name = "../ans/%s_%s_%s_%d_%d_%s_%s" % (date, \
             "".join(filter_pop_month), "".join(filter_like_month), \
             min_topk, max_topk, repeat, dynamic)
     clear_files(result_dir, ans_file, submit_name)
