@@ -3,12 +3,16 @@
 
 import sys, collections
 
+def cal_time(month, day):
+    months = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    return sum(months[0:int(month)]) + int(day)
+
 def load_data(input_file):
     data = []
     fp = open(input_file)
     for line in fp:
-        user, item, rank, month, day = line.split(",")
-        data.append((user, item, rank))
+        user, item, rank, month, day = line.strip().split(",")
+        data.append((user, item, rank, cal_time(month, day)))
     fp.close()
     return data
 
@@ -26,20 +30,27 @@ def cal_repeat(buy, matrix):
 def cal_dynamic(action):
     return max(0.97 ** (action - 1), 0.4)
 
-def cal_like(data, repeat_buy, dynamic, rank_score):
+def cal_decay(day, most_recent_day):
+    return 0.97 ** (most_recent_day - day)
+
+def cal_like(data, repeat_buy, dynamic, rank_score, decay):
     matrix = collections.defaultdict(lambda:collections.defaultdict(float))
     buy = collections.defaultdict(lambda:collections.defaultdict(int))
     action = collections.defaultdict(lambda:collections.defaultdict(int))
 
+    most_recent_day = max([item[3] for item in data])
+
     for record in data:
-        user, item, rank = record
+        user, item, rank, day = record
         buy[user][item] += 1 if rank == "1" else 0
         action[user][rank] += 1
 
     for record in data:
-        user, item, rank = record
-        gain = get_rank_score(rank, rank_score) * (1.0 if dynamic == "0" or rank == "1" \
-                else cal_dynamic(action[user][rank]))
+        user, item, rank, day = record
+        gain = get_rank_score(rank, rank_score) * \
+                (1.0 if dynamic == "0" or rank == "1" \
+                else cal_dynamic(action[user][rank])) * \
+                (1.0 if decay == "0" else cal_decay(day, most_recent_day))
         matrix[user][item] += gain
 
     if repeat_buy == "1":
@@ -62,18 +73,19 @@ def output(output_file, matrix):
     fp.close()
 
 if __name__ == "__main__":
-    if len(sys.argv) < 5:
+    if len(sys.argv) < 6:
         print "Format Error"
     else:
         input_file = sys.argv[1]
         output_file = sys.argv[2]
         repeat_buy = sys.argv[3]
         dynamic = sys.argv[4]
+        decay = sys.argv[5]
 
         data = load_data(input_file)
         rank_score = [0.2, 1.0, 0.5, 0.8]
-        if len(sys.argv) == 6:
-            rank_score = map(lambda x: float(x), sys.argv[5].strip().split(','))
-        matrix = cal_like(data, repeat_buy, dynamic, rank_score)
+        if len(sys.argv) == 7:
+            rank_score = map(lambda x: float(x), sys.argv[6].strip().split(','))
+        matrix = cal_like(data, repeat_buy, dynamic, rank_score, decay)
         normalization(matrix)
         output(output_file, matrix)

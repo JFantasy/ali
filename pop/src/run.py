@@ -26,10 +26,10 @@ def process_gen_pop(result_dir, input_file):
     run_cmd(cmd)
     return pop_file
 
-def process_gen_like(result_dir, input_file, repeat, dynamic):
+def process_gen_like(result_dir, input_file, repeat, dynamic, decay):
     like_file = "%s/like.txt" % result_dir
-    cmd = "python gen_like_matrix.py %s %s %s %s" % \
-            (input_file, like_file, repeat, dynamic)
+    cmd = "python gen_like_matrix.py %s %s %s %s %s" % \
+            (input_file, like_file, repeat, dynamic, decay)
     run_cmd(cmd)
     return like_file
 
@@ -74,8 +74,14 @@ if __name__ == "__main__":
     max_topk = config["max_topk"]
     repeat = config["repeat"]
     dynamic = config["dynamic"]
+    decay = config["decay"]
     month_score = config["month_score"]
     rank_score = config["rank_score"]
+
+    date = datetime.datetime.now().strftime("%m-%d.%H:%M:%S")
+    submit_name = "../ans/%s_%s_%s_%d_%d_%s_%s_%s" % (date, \
+            "".join(filter_pop_month), "".join(filter_like_month), \
+            min_topk, max_topk, repeat, dynamic, decay)
 
     result_dir = build_dir()
 
@@ -85,17 +91,13 @@ if __name__ == "__main__":
             filter_like_month, "like")
     pop_file = process_gen_pop(result_dir, filter_pop_input_file)
     like_file = process_gen_like(result_dir, filter_like_input_file, repeat, \
-            dynamic)
+            dynamic, decay)
     sort_file = process_sort_pop(result_dir, pop_file, like_file, \
             filter_like_input_file)
     topk_file = process_gen_topk(result_dir, filter_like_input_file, sort_file, \
             min_topk, max_topk)
     ans_file = process_gen_ans(result_dir, topk_file, sort_file)
 
-    date = datetime.datetime.now().strftime("%m-%d.%H:%M:%S")
-    submit_name = "../ans/%s_%s_%s_%d_%d_%s_%s" % (date, \
-            "".join(filter_pop_month), "".join(filter_like_month), \
-            min_topk, max_topk, repeat, dynamic)
     clear_files(result_dir, ans_file, submit_name)
 
     print "Finish %s" % submit_name
