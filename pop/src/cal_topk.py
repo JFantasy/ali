@@ -31,6 +31,8 @@ def cal_user_buyrate(data):
 		
 		if behavior == '1':
 			buycnt[user][month-4] += 1
+			
+			#add the total buy behavior
 			buycnt[user][5] += 1
 
 
