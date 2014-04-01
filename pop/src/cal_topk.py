@@ -33,9 +33,10 @@ def cal_user_buyrate(data):
 			buycnt[user][month-4] += 1
 			buycnt[user][5] += 1
 
+
 	buyrate = {}
 	for user in buycnt:
-		buyrate[user] = int(buycnt[user][5])
+		buyrate[user] = int((buycnt[user][4] + buycnt[user][5]) / 2)
 	
 	return buyrate		
 
@@ -44,6 +45,7 @@ def cal_topK(buyrate, user_brandlist, output_file, min_topk, max_topk):
 	for user in user_brandlist:
 		list_len = len(user_brandlist[user])
 		topK = min(list_len, min(max_topk, buyrate[user]))
+		
 		if topK == 0:
 			topK = min(list_len, min_topk)
 		f.write(user + ' ' + str(topK) + '\n')
@@ -53,6 +55,10 @@ def cal_topK(buyrate, user_brandlist, output_file, min_topk, max_topk):
 if __name__ == "__main__":
 	if len(sys.argv) != 6:
 		print "Format Error"
+		data = load_data('../data/ali_order_brand_date_last_2_month.csv')
+		user_brandlist = load_user_brandlist('../data/sort_matrix_last_2_month.txt')
+		buyrate = cal_user_buyrate(data)
+		cal_topK(buyrate, user_brandlist, '../data/topk.txt', 2, 7)
 	else:
 		input_file = sys.argv[1]
 		sort_matrix_file = sys.argv[2]
