@@ -17,12 +17,10 @@ def output(output_file, pop):
         fp.write(item + ' ' + str(pop[item]) + '\n')
     fp.close()
 
-def get_month_score(month):
-    score = [0.2, 0.4, 0.6, 0.8, 1.0]
+def get_month_score(month, score):
     return score[int(month)]
 
-def get_rank_score(rank):
-    score = [0.25, 1.0, 0.5, 0.75]
+def get_rank_score(rank, score):
     return score[int(rank)]
 
 def normalization(pop):
@@ -32,21 +30,27 @@ def normalization(pop):
     for item in pop:
         pop[item] /= score_sum
 
-def cal_pop(data):
+def cal_pop(data, month_score, rank_score):
     pop = {}
     for record in data:
         pop[record[1]] = 0.0
     for record in data:
-        pop[record[1]] += get_month_score(record[3]) * get_rank_score(record[2])
+        pop[record[1]] += get_month_score(record[3], month_score) * \
+                get_rank_score(record[2], rank_score)
     normalization(pop)
     return pop
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3:
         print 'Format Error'
     else:
         input_file = sys.argv[1]
         output_file = sys.argv[2]
         data = load_data(input_file)
-        pop = cal_pop(data)
+        month_score = [0.2, 0.4, 0.6, 0.8, 1.0]
+        rank_score = [0.25, 1.0, 0.5, 0.75]
+        if len(sys.argv) == 5:
+            month_score = map(lambda x: float(x), sys.argv[3].strip().split(','))
+            rank_score = map(lambda x: float(x), sys.argv[4].strip().split(','))
+        pop = cal_pop(data, month_score, rank_score)
         output(output_file, pop)

@@ -12,8 +12,7 @@ def load_data(input_file):
     fp.close()
     return data
 
-def get_rank_score(rank):
-    score = [0.2, 1.0, 0.5, 0.8]
+def get_rank_score(rank, score):
     return score[int(rank)]
 
 def cal_repeat(buy, matrix):
@@ -27,7 +26,7 @@ def cal_repeat(buy, matrix):
 def cal_dynamic(action):
     return max(0.97 ** (action - 1), 0.4)
 
-def cal_like(data, repeat_buy, dynamic):
+def cal_like(data, repeat_buy, dynamic, rank_score):
     matrix = collections.defaultdict(lambda:collections.defaultdict(float))
     buy = collections.defaultdict(lambda:collections.defaultdict(int))
     action = collections.defaultdict(lambda:collections.defaultdict(int))
@@ -39,7 +38,7 @@ def cal_like(data, repeat_buy, dynamic):
 
     for record in data:
         user, item, rank = record
-        gain = get_rank_score(rank) * (1.0 if dynamic == "0" or rank == "1" \
+        gain = get_rank_score(rank, rank_score) * (1.0 if dynamic == "0" or rank == "1" \
                 else cal_dynamic(action[user][rank]))
         matrix[user][item] += gain
 
@@ -49,7 +48,7 @@ def cal_like(data, repeat_buy, dynamic):
 
 def normalization(matrix):
     for user in matrix:
-        sum_score = sum(matrix[user].values()) 
+        sum_score = sum(matrix[user].values())
         for item in matrix[user]:
             matrix[user][item] /= sum_score
 
@@ -72,6 +71,9 @@ if __name__ == "__main__":
         dynamic = sys.argv[4]
 
         data = load_data(input_file)
-        matrix = cal_like(data, repeat_buy, dynamic)
+        rank_score = [0.2, 1.0, 0.5, 0.8]
+        if len(sys.argv) == 6:
+            rank_score = map(lambda x: float(x), sys.argv[5].strip().split(','))
+        matrix = cal_like(data, repeat_buy, dynamic, rank_score)
         normalization(matrix)
         output(output_file, matrix)
