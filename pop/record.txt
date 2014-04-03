@@ -8,5 +8,6 @@ Date        Setting                     Account         F1          Precision   
 
 #add new topk & decay
 4/01        678-678-2-7-0-0-1           cr_01 
+4/01        678-678-2-13-0-0-0          cr_03
 4/01        678-678-2-7-0-0-0           czy_小号         
 4/01        678-678-2-10-0-0-0          czy_大号
