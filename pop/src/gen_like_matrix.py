@@ -31,7 +31,7 @@ def cal_dynamic(action):
     return max(0.97 ** (action - 1), 0.4)
 
 def cal_decay(day, most_recent_day):
-    return 0.97 ** (most_recent_day - day)
+    return 0.99 ** (most_recent_day - day)
 
 def cal_like(data, repeat_buy, dynamic, rank_score, decay):
     matrix = collections.defaultdict(lambda:collections.defaultdict(float))
