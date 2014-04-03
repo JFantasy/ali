@@ -47,7 +47,7 @@ def cal_topK(buyrate, user_brandlist, output_file, min_topk, max_topk):
 		list_len = len(user_brandlist[user])
 		topK = min(list_len, min(max_topk, buyrate[user]))
 		
-		if topK == 0:
+		if topK < min_topk:
 			topK = min(list_len, min_topk)
 		f.write(user + ' ' + str(topK) + '\n')
 
