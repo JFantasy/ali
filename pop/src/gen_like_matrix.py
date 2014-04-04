@@ -37,8 +37,7 @@ def cal_like(data, repeat_buy, dynamic, rank_score, decay):
     matrix = collections.defaultdict(lambda:collections.defaultdict(float))
     buy = collections.defaultdict(lambda:collections.defaultdict(int))
     action = collections.defaultdict(lambda:collections.defaultdict(int))
-
-    most_recent_day = max([item[3] for item in data])
+    most_recent_day = max([cal_time(item[3], item[4]) for item in data])
 
     for record in data:
         user, item, rank, month, day = record
