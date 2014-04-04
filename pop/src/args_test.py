@@ -37,15 +37,16 @@ def evaluate(test, predict):
 
 def cal_best(MaxTime, Keep):
     result = []
-    ######
-    #
-    ######
-    if(len(result) < Keep):
-        result.append([])
-    else:
-        result.append([])
-        result = sorted()
-        result.delete()
+    for _ in xrange(MaxTime):
+        ######
+        #
+        ######
+        if(len(result) < Keep):
+            result.append((F1, (p1, p2, p3, p4)))
+        else:
+            result.append((F1, (p1, p2, p3, p4)))
+            result = sorted()[1:]
+    return result
 
 
 if __name__ == "__main__":
