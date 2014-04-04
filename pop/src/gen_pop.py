@@ -30,7 +30,8 @@ def normalization(pop):
     for item in pop:
         pop[item] /= score_sum
 
-def cal_pop(data, month_score, rank_score):
+def cal_pop(data, month_score = [0.2, 0.4, 0.6, 0.8, 1.0], 
+                  rank_score = [0.25, 1.0, 0.5, 0.75]):
     pop = {}
     for record in data:
         pop[record[1]] = 0.0

@@ -12,7 +12,7 @@ def load_data(input_file):
     fp = open(input_file)
     for line in fp:
         user, item, rank, month, day = line.strip().split(",")
-        data.append((user, item, rank, cal_time(month, day)))
+        data.append((user, item, rank, month, day))
     fp.close()
     return data
 
@@ -41,12 +41,13 @@ def cal_like(data, repeat_buy, dynamic, rank_score, decay):
     most_recent_day = max([item[3] for item in data])
 
     for record in data:
-        user, item, rank, day = record
+        user, item, rank, month, day = record
         buy[user][item] += 1 if rank == "1" else 0
         action[user][rank] += 1
 
     for record in data:
-        user, item, rank, day = record
+        user, item, rank, month, day = record
+        day = cal_time(month, day)
         gain = get_rank_score(rank, rank_score) * \
                 (1.0 if dynamic == "0" or rank == "1" \
                 else cal_dynamic(action[user][rank])) * \
@@ -55,6 +56,7 @@ def cal_like(data, repeat_buy, dynamic, rank_score, decay):
 
     if repeat_buy == "1":
         cal_repeat(buy, matrix)
+    normalization(matrix)
     return matrix
 
 def normalization(matrix):
@@ -87,5 +89,4 @@ if __name__ == "__main__":
         if len(sys.argv) == 7:
             rank_score = map(lambda x: float(x), sys.argv[6].strip().split(','))
         matrix = cal_like(data, repeat_buy, dynamic, rank_score, decay)
-        normalization(matrix)
         output(output_file, matrix)

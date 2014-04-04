@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 
 import sys
-from datetime import datetime
+from collections import defaultdict as ddict
 
 def load_user_brandlist(input_file):
 	f = open(input_file)
@@ -25,17 +25,21 @@ def load_topk(input_file):
 	return topk
 
 def gen_ans(user_brandlist, topk, ans_file):
-	date = datetime.now().strftime('%m%d_%H%M%S')
-	f = open(ans_file, "w")
+	result = ddict(list)
 	for user in user_brandlist:
 		k = topk[user]
 		if k == 0:
 			continue
-		f.write(user + '\t' + user_brandlist[user][0])
-		for i in range(1, k):
-			f.write(',' + user_brandlist[user][i]);
-		f.write('\n')
+		result[user] = user_brandlist[user][:k+1]
+	return result
 
+def output(ans_file, result):
+	f = open(ans_file, "w")
+	for user in result:
+		f.write(user + '\t' + result[user][0])
+		for i in xrange(1, len(result[user])):
+			f.write(',' + result[user][i]);
+		f.write('\n')
 	f.close()
 
 if __name__ == "__main__":
@@ -47,4 +51,5 @@ if __name__ == "__main__":
                 ans_file = sys.argv[3]
 		topk = load_topk(topk_file)
 		user_brandlist = load_user_brandlist(sort_matrix_file)
-		gen_ans(user_brandlist, topk, ans_file)
+		result = gen_ans(user_brandlist, topk, ans_file)
+		output(ans_file, result)
