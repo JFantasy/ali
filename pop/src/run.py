@@ -98,6 +98,6 @@ if __name__ == "__main__":
             min_topk, max_topk)
     ans_file = process_gen_ans(result_dir, topk_file, sort_file)
 
-    clear_files(result_dir, ans_file, submit_name)
+    #clear_files(result_dir, ans_file, submit_name)
 
     print "Finish %s" % submit_name
