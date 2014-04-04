@@ -37,35 +37,12 @@ def load_like(like_file):
     fp.close()
     return like
 
-def load_bonus(bonus_file):
-    bonus = collections.defaultdict(lambda: collections.defaultdict(int))
-    fp = open(bonus_file)
-    for line in fp:
-        user, item = line.split()[0], line.split()[1]
-        bonus[user][item] = int(line.split()[2])
-    fp.close()
-    return bonus
-
-def check_bonus(matrix, bonus):
-    all_item = sum([min(7, len(matrix[user])) for user in matrix])
-    total = 0
-    for user in matrix:
-        for i in range(min(7, len(matrix[user]))):
-            item = matrix[user][i][1]
-            total += 1 if bonus[user][item] > 0 else 0
-
-<<<<<<< HEAD
-def gen_matrix(pop, like, click, bonus):
-=======
-def gen_matrix(pop, click, bonus):
->>>>>>> 12ad4f82cdb819a5e785e78f90278bf3ad7d27f9
+def gen_matrix(pop, click):
     matrix = {}
     for user in click:
         items = []
-        bias = sum([pop[item] * like[user][item] for item in click[user]]) * 0.01
         for item in click[user]:
-            items.append((pop[item] * like[user][item] + \
-                    bonus[user][item] * bias, item))
+            items.append((pop[item] * like[user][item], item))
         matrix[user] = sorted(items, reverse = True)
     return matrix
 
@@ -80,18 +57,16 @@ def output(output_file, matrix):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 5:
         print "Format Error"
     else:
         pop_file = sys.argv[1]
         like_file = sys.argv[2]
-        bonus_file = sys.argv[3]
-        data_file = sys.argv[4]
-        output_file = sys.argv[5]
+        data_file = sys.argv[3]
+        output_file = sys.argv[4]
 
         pop = load_pop(pop_file)
         like = load_like(like_file)
         click = load_click(data_file)
-        bonus = load_bonus(bonus_file)
-        matrix = gen_matrix(pop, like, click, bonus)
+        matrix = gen_matrix(pop, click)
         output(output_file, matrix)

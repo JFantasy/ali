@@ -41,16 +41,21 @@ def cal_user_buyrate(data):
 	
 	return buyrate		
 
-def cal_topK(buyrate, user_brandlist, output_file, min_topk, max_topk):
-	f = open(output_file, 'w')
+def cal_topK(data, user_brandlist, min_topk, max_topk):
+	result = {}
+	buyrate = cal_user_buyrate(data)
 	for user in user_brandlist:
 		list_len = len(user_brandlist[user])
 		topK = min(list_len, min(max_topk, buyrate[user]))
-		
 		if topK < min_topk:
 			topK = min(list_len, min_topk)
-		f.write(user + ' ' + str(topK) + '\n')
+		result[user] = topK
+	return result
 
+def output(output_file, result):
+	f = open(output_file, 'w')
+	for user in result:
+		f.write(user + ' ' + str(result[user]) + '\n')
 	f.close()
 
 if __name__ == "__main__":
@@ -72,6 +77,5 @@ if __name__ == "__main__":
 		# cal_topK(buyrate, user_brandlist, '../data/topk.txt')
 		data = load_data(input_file)
 		user_brandlist = load_user_brandlist(sort_matrix_file)
-		buyrate = cal_user_buyrate(data)
-		cal_topK(buyrate, user_brandlist, topk_file, min_topk, max_topk)
-
+		result = cal_topK(data, user_brandlist, min_topk, max_topk)
+		output(topk_file, result)
