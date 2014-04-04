@@ -12,18 +12,18 @@ def load_pop(pop_file):
     fp.close()
     return pop
 
-def load_click(data_file):
-    click = {}
+def load_action(data_file):
+    action = {}
     fp = open(data_file)
     for line in fp:
         user, item, rank, month, day = line.split(',')
         if rank != "1":
-            if user in click:
-                click[user][item] = 1
+            if user in action:
+                action[user][item] = 1
             else:
-                click[user] = {item : 1}
+                action[user] = {item : 1}
     fp.close()
-    return click
+    return action
 
 def load_like(like_file):
     like = collections.defaultdict(lambda: collections.defaultdict(float))
@@ -54,15 +54,15 @@ def check_bonus(matrix, bonus):
             item = matrix[user][i][1]
             total += 1 if bonus[user][item] > 0 else 0
 
-def gen_matrix(pop, like, click, bonus):
+def gen_matrix(pop, like, action, bonus):
     matrix = {}
-    for user in click:
+    for user in action:
         items = []
-        bias = sum([pop[item] * like[user][item] for item in click[user]]) * 0.01
-        for item in click[user]:
+        bias = sum([pop[item] * like[user][item] for item in action[user]]) * 0.01
+        for item in action[user]:
             items.append((pop[item] * like[user][item] + \
                     bonus[user][item] * bias, item))
-        matrix[user] = sorted(items, reverse = True)
+        matrix[user] = map(lambda x: x[1], sorted(items, reverse = True))
     return matrix
 
 def output(output_file, matrix):
@@ -70,7 +70,7 @@ def output(output_file, matrix):
     for user in matrix:
         fp.write(user + " ")
         for i in range(len(matrix[user])):
-            fp.write(matrix[user][i][1] + " ")
+            fp.write(matrix[user][i] + " ")
         fp.write("\n")
     fp.close()
 
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
         pop = load_pop(pop_file)
         like = load_like(like_file)
-        click = load_click(data_file)
+        action = load_action(data_file)
         bonus = load_bonus(bonus_file)
-        matrix = gen_matrix(pop, like, click, bonus)
+        matrix = gen_matrix(pop, like, action, bonus)
         output(output_file, matrix)

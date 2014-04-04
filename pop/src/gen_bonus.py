@@ -12,15 +12,15 @@ def load_data(input_file):
     fp = open(input_file)
     for line in fp:
         user, item, rank, month, day = line.strip().split(",")
-        data.append((user, item, rank, cal_time(month, day)))
+        data.append((user, item, rank, month, day))
     fp.close()
     return data
 
 def cal_bonus(data, bonus_day):
     bonus = collections.defaultdict(lambda: collections.defaultdict(int))
-    most_recent_day = max([item[3] for item in data])
+    most_recent_day = max([cal_time(item[3], item[4]) for item in data])
     for record in data:
-        if most_recent_day - int(record[3]) < bonus_day:
+        if most_recent_day - cal_time(record[3], record[4]) < bonus_day:
             user, item = record[0], record[1]
             bonus[user][item] += 1
     return bonus

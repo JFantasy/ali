@@ -1,13 +1,19 @@
+import random
+import json
+from time import time
+
 from input_filter import input_filter
 from gen_pop import cal_pop
 from gen_like_matrix import cal_like
-from sort_pop2 import gen_matrix
+from sort_pop import gen_matrix
 from cal_topk import cal_topK
 from gen_ans import gen_ans
+from gen_bonus import cal_bonus
 
 
 
-def load_test(path):
+def load_test():
+    path = "../data/ali_order_brand_date_test.csv"
     test = ddict(list)
     with file(path) as f:
         for line in f:
@@ -17,6 +23,17 @@ def load_test(path):
             bid = int(elements[1])
             test[uid].append(bid)
     return test
+
+def filter_action(data):
+    action = {}
+    for line in data:
+        user, item, rank, month, day = line
+        if rank != "1":
+            if user in action:
+                action[user][item] = 1
+            else:
+                action[user] = {item : 1}
+    return action
 
 def evaluate(test, predict):
     hitBrand = 0
@@ -35,23 +52,29 @@ def evaluate(test, predict):
     F1 = 2*P*R/(P+R)
     return F1
 
-def cal_best(MaxTime, Keep):
+def generate_parameters():
+    l1 = random.randint(1, 100)/100.0
+    l2 = random.randint(1, 100)/100.0
+    l3 = random.randint(1, 100)/100.0
+    l4 = random.randint(1, 100)/100.0
+    return (l1, l2, l3, l4)
+
+def cal_best(test, MaxTime, Keep):
     result = []
+    random.seed(time())
     for _ in xrange(MaxTime):
-        ######
-        #
-        ######
+        p = generate_parameters()
+        predict = cal_predict(p)
+        F1 = evaluate(test, predict)
         if(len(result) < Keep):
-            result.append((F1, (p1, p2, p3, p4)))
+            result.append((F1, p))
         else:
-            result.append((F1, (p1, p2, p3, p4)))
+            result.append((F1, p))
             result = sorted()[1:]
     return result
 
-
-if __name__ == "__main__":
-    test_data = load_test("../data/ali_order_brand_date_test.csv")
-    input_file = "../data/ali_order_brand_date_train.csv"
+def cal_predict(p):
+    input_file = "../data/ali_order_brand_date_full.csv"
     conf_file = file("config.json")
     config = json.load(conf_file)
     conf_file.close()
@@ -63,21 +86,34 @@ if __name__ == "__main__":
     repeat = config["repeat"]
     dynamic = config["dynamic"]
     decay = config["decay"]
+    bonus = config["bonus"]
     month_score = config["month_score"]
     rank_score = config["rank_score"]
 
-    date = datetime.datetime.now().strftime("%m-%d.%H:%M:%S")
-    submit_name = "../ans/%s_%s_%s_%d_%d_%s_%s_%s" % (date, \
-            "".join(filter_pop_month), "".join(filter_like_month), \
-            min_topk, max_topk, repeat, dynamic, decay)
-
-    result_dir = build_dir()
     filtered_pop_input_data = input_filter(input_file, filter_pop_month)
     filtered_like_input_data = input_filter(input_file, filter_like_month)
+    action_data = filter_action(filtered_like_input_data)
     pop_data = cal_pop(filtered_pop_input_data)
+    bonus_data = cal_bonus(filtered_like_input_data, bonus)
     like_data = cal_like(filtered_like_input_data, repeat, dynamic, decay)
-    sort_data = gen_matrix(pop_data, like_data, filtered_like_input_data)
+    sort_data = gen_matrix(pop_data, like_data, action_data, bonus_data)
     topk_data = cal_topK(filtered_like_input_data, sort_data, min_topk, max_topk)
     ans_data = gen_ans(topk_data, sort_data)
+    return ans_data
 
-    print "Finish %s" % submit_name
+if __name__ == "__main__":
+    '''
+    test = load_test()
+    best_results = cal_best(test, 100000, 20)
+    for result in best_results:
+        print "%.3f\t%5f %5f %5f %5f\n" % \
+        (result[0], result[1][0], result[1][1], result[1][2], result[1][3])
+    '''
+    result = cal_predict(1)
+    f = open('tmp.txt', "w")
+    for user in result:
+        f.write(user + '\t' + result[user][0])
+        for i in xrange(1, len(result[user])):
+            f.write(',' + result[user][i]);
+        f.write('\n')
+    f.close()

@@ -33,7 +33,7 @@ def cal_dynamic(action):
 def cal_decay(day, most_recent_day):
     return 0.99 ** (most_recent_day - day)
 
-def cal_like(data, repeat_buy, dynamic, rank_score, decay):
+def cal_like(data, repeat_buy, dynamic, decay, rank_score = [0.2, 1.0, 0.5, 0.8]):
     matrix = collections.defaultdict(lambda:collections.defaultdict(float))
     buy = collections.defaultdict(lambda:collections.defaultdict(int))
     action = collections.defaultdict(lambda:collections.defaultdict(int))
@@ -87,5 +87,5 @@ if __name__ == "__main__":
         rank_score = [0.2, 1.0, 0.5, 0.8]
         if len(sys.argv) == 7:
             rank_score = map(lambda x: float(x), sys.argv[6].strip().split(','))
-        matrix = cal_like(data, repeat_buy, dynamic, rank_score, decay)
+        matrix = cal_like(data, repeat_buy, dynamic, decay, rank_score)
         output(output_file, matrix)
