@@ -33,10 +33,17 @@ def process_gen_like(result_dir, input_file, repeat, dynamic, decay):
     run_cmd(cmd)
     return like_file
 
-def process_sort_pop(result_dir, pop_file, like_file, input_file):
+def process_gen_bonus(result_dir, input_file, bonus):
+    bonus_file = "%s/bonus.txt" % result_dir
+    cmd = "python gen_bonus.py %s %s %s" % (input_file, bonus_file, bonus) \
+            if not bonus == "0" else "touch %s" % bonus_file
+    run_cmd(cmd)
+    return bonus_file
+
+def process_sort_pop(result_dir, pop_file, like_file, bonus_file, input_file):
     sort_file = "%s/sort.txt" % result_dir
-    cmd = "python sort_pop.py %s %s %s %s" % (pop_file, like_file, \
-            input_file, sort_file)
+    cmd = "python sort_pop.py %s %s %s %s %s" % (pop_file, like_file, \
+            bonus_file, input_file, sort_file)
     run_cmd(cmd)
     return sort_file
 
@@ -54,7 +61,8 @@ def process_gen_ans(result_dir, topk_file, sort_file):
     return ans_file
 
 def clear_files(result_dir, ans_file, submit_path):
-    submit_file = submit_path +'/'+ submit_path[submit_path.find('_')+1:] + '.txt'
+    submit_file = submit_path + \
+            '/'+ submit_path[submit_path.find('_')+1:] + '.txt'
     cmd = "mkdir %s; mv %s %s" % (submit_path, ans_file, submit_file)
     run_cmd(cmd)
     cmd = "cp config.json %s" % (submit_path+'/')
@@ -75,13 +83,14 @@ if __name__ == "__main__":
     repeat = config["repeat"]
     dynamic = config["dynamic"]
     decay = config["decay"]
+    bonus = config["bonus"]
     month_score = config["month_score"]
     rank_score = config["rank_score"]
 
     date = datetime.datetime.now().strftime("%m-%d.%H:%M:%S")
-    submit_name = "../ans/%s_%s_%s_%d_%d_%s_%s_%s" % (date, \
+    submit_name = "../ans/%s_%s_%s_%d_%d_%s_%s_%s_%s" % (date, \
             "".join(filter_pop_month), "".join(filter_like_month), \
-            min_topk, max_topk, repeat, dynamic, decay)
+            min_topk, max_topk, repeat, dynamic, decay, bonus)
 
     result_dir = build_dir()
 
@@ -92,12 +101,13 @@ if __name__ == "__main__":
     pop_file = process_gen_pop(result_dir, filter_pop_input_file)
     like_file = process_gen_like(result_dir, filter_like_input_file, repeat, \
             dynamic, decay)
-    sort_file = process_sort_pop(result_dir, pop_file, like_file, \
+    bonus_file = process_gen_bonus(result_dir, filter_like_input_file, bonus)
+    sort_file = process_sort_pop(result_dir, pop_file, like_file, bonus_file, \
             filter_like_input_file)
-    topk_file = process_gen_topk(result_dir, filter_like_input_file, sort_file, \
-            min_topk, max_topk)
+    topk_file = process_gen_topk(result_dir, filter_like_input_file, \
+            sort_file, min_topk, max_topk)
     ans_file = process_gen_ans(result_dir, topk_file, sort_file)
 
-    #clear_files(result_dir, ans_file, submit_name)
+    clear_files(result_dir, ans_file, submit_name)
 
     print "Finish %s" % submit_name
