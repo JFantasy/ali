@@ -30,7 +30,7 @@ def gen_ans(user_brandlist, topk, ans_file):
 		k = topk[user]
 		if k == 0:
 			continue
-		result[user] = user_brandlist[user][:k+1]
+		result[user] = user_brandlist[user][:k]
 	return result
 
 def output(ans_file, result):
