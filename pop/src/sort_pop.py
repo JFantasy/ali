@@ -54,11 +54,7 @@ def check_bonus(matrix, bonus):
             item = matrix[user][i][1]
             total += 1 if bonus[user][item] > 0 else 0
 
-<<<<<<< HEAD
 def gen_matrix(pop, like, click, bonus):
-=======
-def gen_matrix(pop, click, bonus):
->>>>>>> 12ad4f82cdb819a5e785e78f90278bf3ad7d27f9
     matrix = {}
     for user in click:
         items = []
