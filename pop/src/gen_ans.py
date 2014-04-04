@@ -8,7 +8,7 @@ def load_user_brandlist(input_file):
     f = open(input_file)
     user_brandlist = {}
     for line in f:
-        data = line.split(' ')
+        data = line.split()
         user_brandlist[data[0]] = data[1:len(data)]
     f.close()
     return user_brandlist
