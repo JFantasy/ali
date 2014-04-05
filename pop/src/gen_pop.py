@@ -7,7 +7,7 @@ def load_data(input_file):
     fp = open(input_file)
     data = []
     for line in fp:
-        data.append(line.split(","))
+        data.append(line.strip().split(","))
     fp.close()
     return data
 

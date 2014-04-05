@@ -41,19 +41,19 @@ def cal_like(data, repeat_buy, dynamic, decay, rank_score = [0.2, 1.0, 0.5, 0.8]
 
     for record in data:
         user, item, rank, month, day = record
-        buy[user][item] += 1 if rank == "1" else 0
+        buy[user][item] += 1 if rank == 1 else 0
         action[user][rank] += 1
 
     for record in data:
         user, item, rank, month, day = record
         day = cal_time(month, day)
         gain = get_rank_score(rank, rank_score) * \
-                (1.0 if dynamic == "0" or rank == "1" \
+                (1.0 if dynamic == 0 or rank == 1 \
                 else cal_dynamic(action[user][rank])) * \
-                (1.0 if decay == "0" else cal_decay(day, most_recent_day))
+                (1.0 if decay == 0 else cal_decay(day, most_recent_day))
         matrix[user][item] += gain
 
-    if repeat_buy == "1":
+    if repeat_buy == 1:
         cal_repeat(buy, matrix)
     normalization(matrix)
     return matrix
@@ -79,9 +79,9 @@ if __name__ == "__main__":
     else:
         input_file = sys.argv[1]
         output_file = sys.argv[2]
-        repeat_buy = sys.argv[3]
-        dynamic = sys.argv[4]
-        decay = sys.argv[5]
+        repeat_buy = int(sys.argv[3])
+        dynamic = int(sys.argv[4])
+        decay = int(sys.argv[5])
 
         data = load_data(input_file)
         rank_score = [0.2, 1.0, 0.5, 0.8]

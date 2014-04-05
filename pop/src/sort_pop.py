@@ -58,7 +58,7 @@ def gen_matrix(pop, like, action, bonus):
     matrix = {}
     for user in action:
         items = []
-        bias = sum([pop[item] * like[user][item] for item in action[user]]) * 0.02
+        bias = sum([pop[item] * like[user][item] for item in action[user]]) * 0.01
         for item in action[user]:
             items.append((pop[item] * like[user][item] + \
                     bonus[user][item] * bias, item))

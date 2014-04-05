@@ -9,7 +9,7 @@ def load_user_brandlist(input_file):
     user_brandlist = {}
     for line in f:
         data = line.split()
-        user_brandlist[data[0]] = data[1:len(data)]
+        user_brandlist[data[0]] = data[1:]
     f.close()
     return user_brandlist
 
@@ -17,7 +17,7 @@ def load_topk(input_file):
     topk = {}
     f = open(input_file)
     for line in f:
-        user, k = line.split(' ')
+        user, k = line.split()
         topk[user] = int(k)
     f.close()
 

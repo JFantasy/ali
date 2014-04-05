@@ -102,18 +102,8 @@ def cal_predict(p):
     return ans_data
 
 if __name__ == "__main__":
-    '''
     test = load_test()
     best_results = cal_best(test, 100000, 20)
     for result in best_results:
         print "%.3f\t%5f %5f %5f %5f\n" % \
         (result[0], result[1][0], result[1][1], result[1][2], result[1][3])
-    '''
-    result = cal_predict(1)
-    f = open('tmp.txt', "w")
-    for user in result:
-        f.write(user + '\t' + result[user][0])
-        for i in xrange(1, len(result[user])):
-            f.write(',' + result[user][i]);
-        f.write('\n')
-    f.close()

@@ -7,7 +7,7 @@ def load_data(input_file):
     fp = open(input_file)
     data = []
     for line in fp:
-        data.append(line.split(","))
+        data.append(line.strip().split(","))
     fp.close()
     return data
 
@@ -15,9 +15,8 @@ def load_user_brandlist(input_file):
 	f = open(input_file)
 	user_brandlist = {}
 	for line in f:
-		data = line.split(' ')
-		user_brandlist[data[0]] = data[1:len(data)-1]
-
+		data = line.split()
+		user_brandlist[data[0]] = data[1:]
 	f.close()
 	return user_brandlist
 
